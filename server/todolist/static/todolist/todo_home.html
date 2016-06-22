@@ -7,7 +7,8 @@
 <script>
 	var thing = {};
 </script>
-<script src=/static/todolist/vue.js></script>
+<script src="/static/todolist/markdown.js"></script>
+<script src="/static/todolist/vue.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script type="text/javascript" src="/static/todolist/todocode.js"></script>
@@ -26,11 +27,11 @@
 				<input type="checkbox" checked v-if="task.is_done"></input>
 				<input type="checkbox" v-else></input>
 			</td>
-			<td v-on:click="showOverlay" class="tasks">{{ task.name }}</td> 
+			<td v-on:click="showOverlay(task.id)" class="tasks">{{ task.name }}</td> 
 		</tr>
 	</table>
 	
-	<div id="overlay" title="title">
+	<div id="overlay">
 	</div>
 	
 </body>

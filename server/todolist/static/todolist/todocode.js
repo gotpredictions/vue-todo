@@ -33,7 +33,15 @@ function startup() {
 			});
 		},
 		methods: {
-			showOverlay: function(){
+			showOverlay: function(taskID){
+				
+				$.get("/todo/details/"+taskID, function(taskDetails){
+					taskDetails = JSON.parse(taskDetails);
+					$("#overlay").dialog( "option", "title", taskDetails.name);
+					$("#overlay").html(markdown.toHTML(taskDetails.description));
+					
+				})
+				
 				$("#overlay").dialog({
 					modal:true
 				});
