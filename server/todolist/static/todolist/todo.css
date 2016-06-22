@@ -1,0 +1,20 @@
+@CHARSET "UTF-8";
+
+button {
+	font-family: Trebuchet MS;
+}
+
+h1 {
+	text-align: center;
+	width: 100%;
+	font-family: Trebuchet MS;
+}
+
+.tasks {
+	font-family: Trebuchet MS;
+	cursor: pointer;
+}
+
+input {
+	font-family: Trebuchet MS;
+}
