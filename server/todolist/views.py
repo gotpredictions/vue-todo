@@ -32,13 +32,15 @@ def create(request):
         return HttpResponseBadRequest('GET not allowed')
 
     try:
-        data = json.load(request)
+        data_in = request.read()
+        print data_in
+        data = json.loads(data_in)
         t = models.Task()
         t.name = data['name']
         t.is_done = False
         t.description = ''
         t.save()
-        return t.id
+        return HttpResponse(json.dumps({"id":t.id}))
     except Exception as ex:
         return HttpResponseBadRequest(ex.message)
 
