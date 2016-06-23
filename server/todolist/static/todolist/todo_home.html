@@ -24,14 +24,21 @@
 	<table id="taskdisplay">
 		<tr v-for="task in tasklist">
 			<td>
-				<input type="checkbox" checked v-if="task.is_done"></input>
-				<input type="checkbox" v-else></input>
+				<input type="checkbox" checked v-if="task.is_done" v-on:click="unfinished(task.id, false)"></input>
+				<input type="checkbox" v-else v-on:click="unfinished(task.id, true)"></input>
 			</td>
 			<td v-on:click="showOverlay(task.id)" class="tasks">{{ task.name }}</td> 
 		</tr>
 	</table>
 	
 	<div id="overlay">
+		<div id="description">
+			<span v-if="!inEditMode">{{{ description }}}</span>
+			<textarea rows="15" cols="60" v-if="inEditMode" v-model="descriptiontxt"></textarea>
+			<br>
+			<button v-on:click="edit()" v-if="!inEditMode">EDIT</button>
+			<button v-on:click ="save()" v-if="inEditMode">SAVE</button>
+		</div>
 	</div>
 	
 </body>

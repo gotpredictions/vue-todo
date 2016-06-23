@@ -3,7 +3,7 @@
  */
 function startup() {
 	
-	var ID = 0;
+	$("#overlay").hide();
 	
 	thing.taskcreator = new Vue({
 		el: "#addTask",
@@ -12,8 +12,11 @@ function startup() {
 		}, 
 		methods: {
 			addTask: function(){
-				thing.taskdisplayer.tasklist.push({ id:ID, name:this.taskname, is_done: false});
-				ID++;
+				name = this.taskname;
+				$.post("/todo/create", JSON.stringify({name:this.taskname, is_done:false}), function(createStatus){
+					createStatus = JSON.parse(createStatus);
+					thing.taskdisplayer.tasklist.push({ id:createStatus.id, name:name, is_done: false});
+				})
 			}
 		}
 	})
@@ -34,18 +37,51 @@ function startup() {
 		},
 		methods: {
 			showOverlay: function(taskID){
-				
+				tid = taskID;
 				$.get("/todo/details/"+taskID, function(taskDetails){
 					taskDetails = JSON.parse(taskDetails);
 					$("#overlay").dialog( "option", "title", taskDetails.name);
-					$("#overlay").html(markdown.toHTML(taskDetails.description));
-					
+					thing.overlay.description = markdown.toHTML(taskDetails.description);
+					thing.overlay.descriptiontxt = taskDetails.description;
+					thing.overlay.tid = tid;
+					thing.overlay.inEditMode = false;
 				})
 				
 				$("#overlay").dialog({
 					modal:true
 				});
+			},
+			unfinished: function(ID, status){
+				for (i = 0;  i < this.tasklist.length; ++i){
+					if(this.tasklist[i].id === ID){
+						this.tasklist[i].is_done = status;
+						$.post("/todo/update/"+ID, JSON.stringify({is_done:status}), function(data){})
+					}
+				}
 			}
 		}
 	})
+	
+	thing.overlay = new Vue({
+		el: "#description",
+		data: {
+			description: "",
+			descriptiontxt: "",
+			tid: "",
+			inEditMode: false
+		},
+		methods: {
+			edit: function(){
+				this.inEditMode = true;
+				console.log(tid);
+			},
+			save: function(){
+				this.inEditMode = false;
+				this.description = markdown.toHTML(this.descriptiontxt);
+				$.post("/todo/update/"+this.tid, JSON.stringify({description:this.descriptiontxt}), function(data){})
+			}
+			
+		}
+	})
+	
 }
