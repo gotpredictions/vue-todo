@@ -17,6 +17,10 @@ function startup() {
 					createStatus = JSON.parse(createStatus);
 					thing.taskdisplayer.tasklist.push({ id:createStatus.id, name:name, is_done: false});
 				})
+				.fail(function(response) {
+				    alert('Error: ' + response.responseText);
+				});
+
 			}
 		}
 	})
@@ -45,6 +49,7 @@ function startup() {
 					thing.overlay.descriptiontxt = taskDetails.description;
 					thing.overlay.tid = tid;
 					thing.overlay.inEditMode = false;
+					thing.overlay.waiting = false;
 				})
 				
 				$("#overlay").dialog({
@@ -56,6 +61,10 @@ function startup() {
 					if(this.tasklist[i].id === ID){
 						this.tasklist[i].is_done = status;
 						$.post("/todo/update/"+ID, JSON.stringify({is_done:status}), function(data){})
+						.fail(function(response) {
+						    alert('Error: ' + response.responseText);
+						});
+
 					}
 				}
 			}
@@ -68,7 +77,8 @@ function startup() {
 			description: "",
 			descriptiontxt: "",
 			tid: "",
-			inEditMode: false
+			inEditMode: false,
+			waiting: false
 		},
 		methods: {
 			edit: function(){
@@ -78,7 +88,15 @@ function startup() {
 			save: function(){
 				this.inEditMode = false;
 				this.description = markdown.toHTML(this.descriptiontxt);
-				$.post("/todo/update/"+this.tid, JSON.stringify({description:this.descriptiontxt}), function(data){})
+				this.waiting = true;
+				$.post("/todo/update/"+this.tid, JSON.stringify({description:this.descriptiontxt}), function(data){
+					thing.overlay.waiting = false;
+				})
+				.fail(function(response) {
+				    alert('Error: ' + response.responseText);
+				    thing.overlay.waiting = false;
+				});
+
 			}
 			
 		}

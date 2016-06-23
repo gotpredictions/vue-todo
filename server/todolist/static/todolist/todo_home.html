@@ -36,7 +36,8 @@
 			<span v-if="!inEditMode">{{{ description }}}</span>
 			<textarea rows="15" cols="60" v-if="inEditMode" v-model="descriptiontxt"></textarea>
 			<br>
-			<button v-on:click="edit()" v-if="!inEditMode">EDIT</button>
+			<button v-on:click="edit()" v-if="!inEditMode && !waiting">EDIT</button>
+			<img alt="progress" src="/static/todolist/progress.gif" height="50pt" width="50pt" v-if="waiting">
 			<button v-on:click ="save()" v-if="inEditMode">SAVE</button>
 		</div>
 	</div>

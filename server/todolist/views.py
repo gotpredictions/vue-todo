@@ -48,6 +48,9 @@ def update(request, task_id=None):
 
     if request.method == 'GET':
         return HttpResponseBadRequest('GET not allowed')
+    
+    import time
+    time.sleep(5)
 
     try:
         task_details = models.Task.objects.get(['id', task_id])
