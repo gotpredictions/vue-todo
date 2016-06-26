@@ -4,7 +4,44 @@
 function startup() {
 	
 	$("#overlay").hide();
-	
+
+
+	Vue.component("my-task", {
+		template: `<tr>
+			<td>
+				<input type="checkbox" checked v-if="details.is_done" v-on:click="unfinished(details.id, false)"></input>
+				<input type="checkbox" v-else v-on:click="unfinished(details.id, true)"></input>
+			</td>
+			<td v-on:click="showOverlay(details.id)" class="tasks">{{ details.name }}</td>
+		</tr>`,
+		props: ['details'],
+		methods: {
+			unfinished: function(ID, status){
+				this.details.is_done = status;
+				$.post("/todo/update/"+ID, JSON.stringify({is_done:status}), function(data){})
+				.fail(function(response) {
+					alert('Error: ' + response.responseText);
+				});
+			},
+			showOverlay: function(taskID){
+				tid = taskID;
+				$.get("/todo/details/"+taskID, function(taskDetails){
+					taskDetails = JSON.parse(taskDetails);
+					$("#overlay").dialog( "option", "title", taskDetails.name);
+					thing.overlay.description = markdown.toHTML(taskDetails.description);
+					thing.overlay.descriptiontxt = taskDetails.description;
+					thing.overlay.tid = tid;
+					thing.overlay.inEditMode = false;
+					thing.overlay.waiting = false;
+				});
+
+				$("#overlay").dialog({
+					modal:true
+				});
+			}
+		}
+	});
+
 	thing.taskcreator = new Vue({
 		el: "#addTask",
 		data: {
@@ -23,7 +60,7 @@ function startup() {
 
 			}
 		}
-	})
+	});
 	
 	thing.taskdisplayer = new Vue({
 		el: "#taskdisplay",
@@ -40,36 +77,9 @@ function startup() {
 			});
 		},
 		methods: {
-			showOverlay: function(taskID){
-				tid = taskID;
-				$.get("/todo/details/"+taskID, function(taskDetails){
-					taskDetails = JSON.parse(taskDetails);
-					$("#overlay").dialog( "option", "title", taskDetails.name);
-					thing.overlay.description = markdown.toHTML(taskDetails.description);
-					thing.overlay.descriptiontxt = taskDetails.description;
-					thing.overlay.tid = tid;
-					thing.overlay.inEditMode = false;
-					thing.overlay.waiting = false;
-				})
-				
-				$("#overlay").dialog({
-					modal:true
-				});
-			},
-			unfinished: function(ID, status){
-				for (i = 0;  i < this.tasklist.length; ++i){
-					if(this.tasklist[i].id === ID){
-						this.tasklist[i].is_done = status;
-						$.post("/todo/update/"+ID, JSON.stringify({is_done:status}), function(data){})
-						.fail(function(response) {
-						    alert('Error: ' + response.responseText);
-						});
 
-					}
-				}
-			}
 		}
-	})
+	});
 	
 	thing.overlay = new Vue({
 		el: "#description",
