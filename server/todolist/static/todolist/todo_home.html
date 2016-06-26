@@ -17,8 +17,8 @@
 	<h1>YOUR TASKS</h1>
 	 
 	<div id="addTask">
-		<input v-model="taskname" type="text" placeholder="Type to add new task"></input>
-		<button v-on:click="addTask">ADD</button>
+		<input v-model="taskname" type="text" placeholder="Type to add new task" @keyup.enter="addTask"></input>
+		<!--button v-on:click="addTask">ADD</button-->
 	</div>
 	
 	<table id="taskdisplay">

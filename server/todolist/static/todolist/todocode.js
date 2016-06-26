@@ -16,6 +16,7 @@ function startup() {
 				$.post("/todo/create", JSON.stringify({name:this.taskname, is_done:false}), function(createStatus){
 					createStatus = JSON.parse(createStatus);
 					thing.taskdisplayer.tasklist.push({ id:createStatus.id, name:name, is_done: false});
+					thing.taskcreator.taskname = "";
 				})
 				.fail(function(response) {
 				    alert('Error: ' + response.responseText);
@@ -45,7 +46,6 @@ function startup() {
 				$.get("/todo/details/"+taskID, function(taskDetails){
 					taskDetails = JSON.parse(taskDetails);
 					$("#overlay").dialog( "option", "title", taskDetails.name);
-					thing.overlay.description = markdown.toHTML(taskDetails.description);
 					thing.overlay.descriptiontxt = taskDetails.description;
 					thing.overlay.tid = tid;
 					thing.overlay.inEditMode = false;
@@ -74,11 +74,16 @@ function startup() {
 	thing.overlay = new Vue({
 		el: "#description",
 		data: {
-			description: "",
+			//description: "",
 			descriptiontxt: "",
 			tid: "",
 			inEditMode: false,
 			waiting: false
+		},
+		computed: {
+			description: function(){
+				return markdown.toHTML(this.descriptiontxt);
+			}
 		},
 		methods: {
 			edit: function(){
@@ -87,7 +92,6 @@ function startup() {
 			},
 			save: function(){
 				this.inEditMode = false;
-				this.description = markdown.toHTML(this.descriptiontxt);
 				this.waiting = true;
 				$.post("/todo/update/"+this.tid, JSON.stringify({description:this.descriptiontxt}), function(data){
 					thing.overlay.waiting = false;
