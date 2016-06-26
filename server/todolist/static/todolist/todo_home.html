@@ -17,20 +17,21 @@
 	<h1>YOUR TASKS</h1>
 	 
 	<div id="addTask">
-		<input v-model="taskname" type="text" placeholder="Type to add new task" @keyup.enter="addTask"></input>
+		<input v-model="taskname" type="text" placeholder="Type to add new task" @keyup.enter="addTask"/>
 		<!--button v-on:click="addTask">ADD</button-->
 	</div>
 	
 	<table id="taskdisplay">
-		<tr v-for="task in tasklist">
-			<td>
-				<input type="checkbox" checked v-if="task.is_done" v-on:click="unfinished(task.id, false)"></input>
-				<input type="checkbox" v-else v-on:click="unfinished(task.id, true)"></input>
-			</td>
-			<td v-on:click="showOverlay(task.id)" class="tasks">{{ task.name }}</td> 
-		</tr>
+        <template v-for="task in tasklist">
+            <my-task v-bind:details="task"></my-task>
+        </template>
 	</table>
-	
+
+
+
+
+
+
 	<div id="overlay">
 		<div id="description">
 			<span v-if="!inEditMode">{{{ description }}}</span>
